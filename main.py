@@ -21,6 +21,7 @@ class Window(Style):
         self.configure("Outline.TButton", font=(None, 13, 'bold'))
         self.configure('checkout.primary.TButton', font=(None, 15, 'bold'))
         self.configure("GrandTotal.TEntry", font=(None, 20, 'bold'))
+        self.configure('navbar.primary.TButton', font=(None, 15, 'bold'))
         self.map(
             "TEntry",
             foreground=[("disabled", "#808080")]
@@ -32,19 +33,26 @@ class Window(Style):
 
         self.tabs = ttk.Notebook(self.master, name='main')
         self.billing_frame = ttk.Frame(self.tabs, name='billing_frame')
-        self.settings_frame = ttk.Frame(self.tabs, name='settings_frame')
+        self.database_frame = Frame(self.tabs, name='database_frame')
+        self.statistic_frame = Frame(self.tabs, name='statistic_frame')
+        self.account_frame = Frame(self.tabs, name='account_frame')
+        self.barcode_frame = Frame(self.tabs, name='barcode_frame')
+        self.theme_frame = Frame(self.tabs, name='theme_frame')
+        self.receipt_frame = Frame(self.tabs, name='receipt_frame')
 
         self.billing_container = BillingFrame(self.billing_frame, name='billing_container')
-        self.settings_container = ttk.Frame(self.settings_frame, name='settings_container')
 
         self.billing_container.pack(padx=20, pady=20)
-        self.settings_container.pack(padx=20, pady=20)
 
         self.tabs.add(self.billing_frame, text='Billing')
-        self.tabs.add(self.settings_frame, text='Settings')
-        self.tabs.pack(pady=(20, 0))
+        self.tabs.add(self.database_frame, text='Database')
+        self.tabs.add(self.statistic_frame, text='Statistic')
+        self.tabs.add(self.account_frame, text='Account')
+        self.tabs.add(self.barcode_frame, text='Barcode')
+        self.tabs.add(self.theme_frame, text='Theme')
+        self.tabs.add(self.receipt_frame, text='Receipt')
+        self.tabs.pack(pady=(20, 0), padx=(10, 0))
 
-        #self.generate_settings_frame()
         self.master.update()
 
 class BillingFrame(ttk.Frame):
@@ -353,17 +361,18 @@ class BillingFrame(ttk.Frame):
         if self.purchased_list.selection():
             selection_id = self.purchased_list.selection()[0]
             selection_content = self.purchased_list.item(selection_id)['values']
-            self.editwindow = EditWindow(self, selection_content[0])
+            self.editwindow = EditWindow(self, selection_content[0], selection_id)
             self.editwindow.mainloop()
 
 class EditWindow(Toplevel, BillingFrame):
-    def __init__(self, main_window, selection_id):
+    def __init__(self, main_window, selection_id, treeview_id):
         super().__init__()
 
         self.title('Edit Item')
 
         self.main_window = main_window
         self.data_id = selection_id
+        self.treeview_id = treeview_id
         
         self.define_widget()
         self.place_widget()
@@ -389,7 +398,7 @@ class EditWindow(Toplevel, BillingFrame):
 
         edit = [
             ('product_sno', 'SNO', 10, (self.register(lambda P: self.find_product_by_sno(P, self.widget_container)), '%P'), NORMAL, 'xterm'),
-            ('product_code', 'Product Code', 15, lambda: True, NORMAL, 'xterm'),
+            ('product_code', 'Product Code', 15, (self.master.register(lambda P: self.find_product_by_code(P, self.widget_container)), '%P'), NORMAL, 'xterm'),
             ('product_name', 'Product Name', 40, lambda: True, DISABLED, 'arrow'),
             ('quantity', 'Qty', 5, (self.register(self.update_amount), '%P'), NORMAL, 'xterm', lambda: self.update_amount(self.quantity_input.get())),
             ('unit_name', 'Unit', 15, lambda: True, DISABLED, 'arrow'),
@@ -433,8 +442,8 @@ class EditWindow(Toplevel, BillingFrame):
 
     def save_and_close(self):
         if all(self.widget_container.nametowidget(i).get() for i in self.purchased_data_order):
-            self.main_window.purchased_list.delete(self.data_id)
-            self.main_window.purchased_list.insert(parent='', index=int(self.data_id[1:]), values=[self.widget_container.nametowidget(i).get() for i in self.main_window.purchased_data_order])
+            self.main_window.purchased_list.delete(self.treeview_id)
+            self.main_window.purchased_list.insert(parent='', index=int(self.treeview_id[1:]), values=[self.widget_container.nametowidget(i).get() for i in self.main_window.purchased_data_order])
             self.main_window.update_summary()
             self.destroy()
 
