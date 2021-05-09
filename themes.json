@@ -1,0 +1,124 @@
+{
+	"themes": [
+		{
+			"name": "devexpress_purple",
+			"font": "Helvetica 10",
+			"type": "light",
+			"colors": {
+				"primary": "#7989FF",
+				"secondary": "#c5c5c5",
+				"success": "#34BC3F",
+				"info": "#3498db",
+				"warning": "#FC7721",
+				"danger": "#F31B48",
+				"bg": "#ffffff",
+				"fg": "#212529",
+				"selectbg": "#95a5a6",
+				"selectfg": "#ffffff",
+				"border": "#ced4da",
+				"inputfg": "#212529",
+				"inputbg": "#ecf0f1"
+			}
+		},
+		{
+			"name": "devexpress_blazing_berry",
+			"font": "Helvetica 10",
+			"type": "light",
+			"colors": {
+				"primary": "#5F368D",
+				"secondary": "#95a5a6",
+				"success": "#28A745",
+				"info": "#00A9E6",
+				"warning": "#FFC107",
+				"danger": "#DC3545",
+				"bg": "#ffffff",
+				"fg": "#212529",
+				"selectbg": "#95a5a6",
+				"selectfg": "#ffffff",
+				"border": "#ced4da",
+				"inputfg": "#212529",
+				"inputbg": "#ecf0f1"
+			}
+		},
+		{
+			"name": "devexpress_office_white",
+			"font": "Helvetica 10",
+			"type": "light",
+			"colors": {
+				"primary": "#FE7109",
+				"secondary": "#95a5a6",
+				"success": "#10893E",
+				"info": "#0078D7",
+				"warning": "#FFB900",
+				"danger": "#E81123",
+				"bg": "#ffffff",
+				"fg": "#212529",
+				"selectbg": "#95a5a6",
+				"selectfg": "#ffffff",
+				"border": "#ced4da",
+				"inputfg": "#212529",
+				"inputbg": "#ecf0f1"
+			}
+		},
+		{
+			"name": "rc2",
+			"font": "Helvetica 10",
+			"type": "dark",
+			"colors": {
+				"primary": "#FF3333",
+				"secondary": "#444444",
+				"success": "#439E4C",
+				"info": "#6BAFD9",
+				"warning": "#ED8864",
+				"danger": "#D74C47",
+				"bg": "#010101",
+				"fg": "#ffffff",
+				"selectbg": "#444444",
+				"selectfg": "#ffffff",
+				"border": "#808080",
+				"inputfg": "#F2F2F2",
+				"inputbg": "#212121"
+			}
+		},
+		{
+			"name": "the_purple",
+			"font": "Helvetica 10",
+			"type": "dark",
+			"colors": {
+				"primary": "#6A59CC",
+				"secondary": "#a6a6a6",
+				"success": "#00bc8c",
+				"info": "#3498db",
+				"warning": "#f39c12",
+				"danger": "#e74c3c",
+				"bg": "#403483",
+				"fg": "#ffffff",
+				"selectbg": "#6455B8",
+				"selectfg": "#ffffff",
+				"border": "#6A59CC",
+				"inputfg": "#ffffff",
+				"inputbg": "#5747B2"
+			}
+		},
+		{
+			"name": "navy_blue",
+			"font": "Helvetica 10",
+			"type": "light",
+			"colors": {
+				"primary": "#103D7D",
+				"secondary": "#95a5a6",
+				"success": "#78B945",
+				"info": "#0195DA",
+				"warning": "#F35A24",
+				"danger": "#ED352A",
+				"bg": "#F6F9FD",
+				"fg": "#212529",
+				"selectbg": "#124690",
+				"selectfg": "#ffffff",
+				"border": "#CCCCCC",
+				"inputfg": "#212529",
+				"inputbg": "#FFFFFF"
+			}
+		}
+	]
+}
