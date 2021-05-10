@@ -251,8 +251,8 @@ class BillingFrame(Frame):
         self.quantity_input.bind('<FocusOut>', lambda e: e.widget.select_clear())
         self.product_sno_input.bind('<FocusOut>', lambda e: e.widget.select_clear())
 
-        self.product_lst.configure(yscrollcommand = self.product_lst_scrollbar.set)
-        self.purchased_lst.configure(yscrollcommand = self.purchased_lst_scrollbar.set)
+        self.product_lst.configure(yscrollcommand=self.product_lst_scrollbar.set)
+        self.purchased_lst.configure(yscrollcommand=self.purchased_lst_scrollbar.set)
 
     def initialize_entry(self):
         self.bill_no_input.insert(0, 'RC210000001')
@@ -407,6 +407,8 @@ class DatabaseFrame(Frame):
     connection = sqlite3.connect('bill_store.db')
     cursor = connection.cursor()
 
+    product_table_proportion = (1, 3, 4, 10, 2, 3, 3, 3)
+
     type_proportion = {
         'INTEGER': 100,
         'REAL': 100,
@@ -432,6 +434,7 @@ class DatabaseFrame(Frame):
         self.table_name_input_container = Frame(self.top_container)
         self.table_name_input_lb = ttk.Label(self.table_name_input_container, text='Table Name')
         self.table_name_input_input = ttk.Combobox(self.table_name_input_container)
+        
         self.table_name_input_input['values'] = [i[0].replace('_', ' ').title() for i in self.cursor.execute("SELECT name FROM sqlite_master WHERE type='table';").fetchall()]
         self.table_name_input_input['state'] = 'readonly'
         self.table_name_input_input.set('Products')
@@ -442,6 +445,8 @@ class DatabaseFrame(Frame):
         self.search_input_input = ttk.Entry(self.search_input_container)
         
         self.database_table = ttk.Treeview(self.left_container)
+        self.database_table_x_scrollbar = ttk.Scrollbar(self.left_container, command=self.database_table.xview, orient='horizontal')
+        self.database_table_y_scrollbar = ttk.Scrollbar(self.left_container, command=self.database_table.yview, orient='vertical')
 
     def place_widget(self):
         self.left_container.grid(row=0, column=0, sticky=NSEW)
@@ -456,29 +461,50 @@ class DatabaseFrame(Frame):
         self.search_input_lb.pack(fill=BOTH, pady=(0, 5))
         self.search_input_input.pack(fill=BOTH)
 
-        self.database_table.pack(fill=BOTH, expand=True)
-
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=0)
         self.top_container.grid_columnconfigure(0, weight=1)
         self.top_container.grid_columnconfigure(1, weight=5)
+        self.database_table_y_scrollbar.pack(fill=Y, side=RIGHT)
+        self.database_table_x_scrollbar.pack(fill=X, side=BOTTOM)
+        self.database_table.configure(yscrollcommand=self.database_table_y_scrollbar.set)
+        self.database_table.configure(xscrollcommand=self.database_table_x_scrollbar.set)
 
     def config_treeview(self):
-        column_names_raw = self.cursor.execute(f"PRAGMA table_info('{self.table_name_input_input.get().replace(' ', '_').lower()}')").fetchall()
+        table_name = self.table_name_input_input.get().replace(' ', '_').lower()
+        column_names_raw = self.cursor.execute(f"PRAGMA table_info('{table_name}')").fetchall()
         column_names, column_type = zip(*(i[1:3] for i in column_names_raw))
-        column_width = [0]+[self.type_proportion[i] for i in column_type]
+        column_width = [100]+[i*50 for i in self.product_table_proportion]
+        column_names = [i.replace('_', ' ').title() for i in column_names]
 
         self.database_table.pack_forget()
         self.database_table['columns'] = column_names
-        [self.database_table.column(i, anchor=W, minwidth=10, width=j, stretch=NO) for i, j in zip(('#0',)+self.database_table['columns'], column_width)]
+        [self.database_table.column(i, anchor=W, minwidth=j, width=j, stretch=NO) for i, j in zip(('#0',)+self.database_table['columns'], column_width)]
         [self.database_table.heading(i, text=j, anchor=W) for i, j in zip(self.database_table['columns'], column_names)]
-        self.database_table.pack(fill=Y, expand=True)
+        self.database_table.pack(fill=BOTH, side=LEFT)
+
+        self.show_database(table_name)
 
     def table_name_change_callback(self, e):
         self.table_name_input_input.selection_clear()
         self.config_treeview()
-        print(self.right_container.winfo_width())
+
+    def show_database(self, table_name):
+        for i in self.database_table.get_children():
+            self.database_table.delete(i)
+
+        if table_name == 'products':
+            categories = self.cursor.execute('SELECT DISTINCT category FROM '+table_name).fetchall()
+            for i, v in enumerate(categories):
+                self.database_table.insert('', 'end', v[0], text=v[0])
+                products = self.cursor.execute('SELECT * FROM {} WHERE category="{}"'.format(table_name, v[0])).fetchall()
+                for v in products:
+                    self.database_table.insert(v[2], 'end', values=v)
+        else:
+            products = self.cursor.execute('SELECT * FROM {}'.format(table_name)).fetchall()
+            for v in products:
+                self.database_table.insert('', 'end', values=v)
 
 class EditWindow(Toplevel, BillingFrame):
     def __init__(self, main_window, selection_id, treeview_id):
